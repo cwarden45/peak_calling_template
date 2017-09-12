@@ -1,4 +1,3 @@
-# peak_calling_template
 Template for analysis of peak-calling data
 
 ### Reference Annotations ###
