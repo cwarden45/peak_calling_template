@@ -75,6 +75,8 @@ IGV / igvtools: http://software.broadinstitute.org/software/igv/
 
 i-cisTarget: https://gbiomed.kuleuven.be/apps/lcb/i-cisTarget/index.php
 
+HOMER: http://homer.ucsd.edu/homer/introduction/programs.html
+
 ### Parameter Values ###
 | Parameter | Value|
 |---|---|
