@@ -1085,14 +1085,14 @@ if(length(dbr.genes) > 1){
 		}
 		
 		std.expr = apply(temp.fpkm, 1, standardize.arr)
-		if(length(deg.genes) < 25){
-			colnames(std.expr) = deg.genes
+		if(length(dbr.genes) < 25){
+			colnames(std.expr) = dbr.genes
 		} else {
-			colnames(std.expr) = rep("", length(deg.genes))
+			colnames(std.expr) = rep("", length(dbr.genes))
 		}
 		rownames(std.expr) = sample.label
 
-		column_annotation = as.matrix(deg.genes)
+		column_annotation = as.matrix(dbr.genes)
 		colnames(column_annotation) = c("")
 
 		row_annotation = data.frame(label1 = labelColors1, label2 = labelColors2)
@@ -1128,10 +1128,10 @@ if(length(dbr.genes) > 1){
 				temp.fc.table = temp.fc.table[,-ncol(temp.fc.table)]
 			}
 			temp.fc.table = temp.fc.table[status != "No Change", ]
-			if(length(deg.genes) < 25){
-				rownames(temp.fc.table) = deg.genes
+			if(length(dbr.genes) < 25){
+				rownames(temp.fc.table) = dbr.genes
 			} else {
-				rownames(temp.fc.table) = rep("",times=length(deg.genes))
+				rownames(temp.fc.table) = rep("",times=length(dbr.genes))
 			}
 			colnames(temp.fc.table) = gsub(".:.",":",gsub("fold.change.","",colnames(temp.fc.table)))
 		
