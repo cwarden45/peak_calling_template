@@ -798,9 +798,9 @@ if(rep.check == 1){
 		stop("pvalue_method must be \"edgeR\", \"limma-voom\", \"DESeq2\", \"lm\", or \"ANOVA\"")
 	}
 } else{
-	test.pvalue = rep(1,times=length(genes))
-	prim.pvalue = rep(1,times=length(genes))
-	sec.pvalue = rep(1,times=length(genes))
+	test.pvalue = rep(1,times=length(regionID))
+	prim.pvalue = rep(1,times=length(regionID))
+	sec.pvalue = rep(1,times=length(regionID))
 }#end else
 
 if (trt.group == "continuous"){
