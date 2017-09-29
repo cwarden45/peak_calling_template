@@ -1077,14 +1077,14 @@ if(length(dbr.genes) > 1){
 		}
 		
 		std.expr = apply(temp.fpkm, 1, standardize.arr)
-		if(length(deg.genes) < 25){
-			colnames(std.expr) = deg.genes
+		if(length(dbr.genes) < 25){
+			colnames(std.expr) = dbr.genes
 		} else {
-			colnames(std.expr) = rep("", length(deg.genes))
+			colnames(std.expr) = rep("", length(dbr.genes))
 		}
 		rownames(std.expr) = sample.label
 
-		column_annotation = as.matrix(deg.genes)
+		column_annotation = as.matrix(dbr.genes)
 		colnames(column_annotation) = c("")
 
 		row_annotation = data.frame(label1 = labelColors1, label2 = labelColors2)
