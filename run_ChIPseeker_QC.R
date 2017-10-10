@@ -78,16 +78,17 @@ if(genome == "hg38"){
 }
 
 #use larger window to test validity of smaller window
-promoter= getPromoters(TxDb=txdb, upstream=3000, downstream=3000)
-tagMatrixList = lapply(bedFiles, getTagMatrix, windows=promoter)
+#promoter= getPromoters(TxDb=txdb, upstream=3000, downstream=3000)
+#tagMatrixList = lapply(bedFiles, getTagMatrix, windows=promoter)
 
-pdf("ChIPseeker_TSS_heatmap_Bowtie2.pdf", width=10, height=5)
-tagHeatmap(tagMatrixList, xlim=c(-3000, 3000), color=NULL)
-dev.off()
-
-#pdf("ChIPseeker_TSS_line_coverage.pdf", width=10, height=5)
-#plotAvgProf(tagMatrixList, xlim=c(-3000, 3000), conf=0.95,resample=500, facet="row")
+#pdf("ChIPseeker_TSS_heatmap_Bowtie2.pdf", width=10, height=5)
+#tagHeatmap(tagMatrixList, xlim=c(-3000, 3000), color=NULL)
 #dev.off()
+
+##double-comment because this function takes even longer than the above function
+##pdf("ChIPseeker_TSS_line_coverage.pdf", width=10, height=5)
+##plotAvgProf(tagMatrixList, xlim=c(-3000, 3000), conf=0.95,resample=500, facet="row")
+##dev.off()
 
 peakAnnoList = lapply(bedFiles, annotatePeak, TxDb=txdb,
                        tssRegion=c(-tss.dist, tss.dist), verbose=FALSE)
