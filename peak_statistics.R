@@ -11,7 +11,7 @@ merged.peak.file = as.character(param.table$Value[param.table$Parameter == "merg
 peakType = as.character(param.table$Value[param.table$Parameter == "peakType"])
 annoType = as.character(param.table$Value[param.table$Parameter == "gtfID"])
 sample.description.file = as.character(param.table$Value[param.table$Parameter == "sample_description_file"])
-tss.GTF = as.character(param.table$Value[param.table$Parameter == "promoterGTF_PC"])
+tss.GTF = as.character(param.table$Value[param.table$Parameter == "promoterGTF"])
 merged.GTF = as.character(param.table$Value[param.table$Parameter == "mergedPeakGTF"])
 
 library("GenomicRanges")
