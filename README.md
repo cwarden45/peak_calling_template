@@ -96,6 +96,7 @@ HOMER: http://homer.ucsd.edu/homer/introduction/programs.html
 |peakType|Are you calling 'narrow' or 'broad' peaks? Can be 'yes' or 'no'.|
 |Threads|Number of Threads for Bowtie2 Alignment|
 |PE_Reads|Are you using paired-end reads? Can be 'yes' or 'no'.|
+|Remove_Duplicates|Use Picard to remove duplicates? Can be 'yes' or 'no'.|
 |promoterGTF|Path to promoter .gtf file for htseq-count; produced using `create_promoter_gtf.R`|
 |flankTSS|When creating promoter .gtf, flanking distance from TSS (total sizs will be twice this, for upstream and downstream flanking sequence)|
 |mergedPeakGTF|Merged peak from separate peak-calling results, using for htseq-count|
