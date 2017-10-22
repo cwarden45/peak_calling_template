@@ -4,7 +4,7 @@ param.table = read.table("parameters.txt", header=T, sep="\t")
 alignment.folder = as.character(param.table$Value[param.table$Parameter == "Alignment_Folder"])
 length.file = as.character(param.table$Value[param.table$Parameter == "chr_length_file"])
 aligned.stats.file = as.character(param.table$Value[param.table$Parameter == "aligned_stats_file"])
-peak.type = as.character(param.table$Value[param.table$Parameter == "peakType"])
+nodup.bam = as.character(param.table$Value[param.table$Parameter == "Remove_Duplicates"])
 omit.chr = unlist(strsplit(as.character(param.table$Value[param.table$Parameter == "omitChr"]), split=","))
 
 length.table = read.table(length.file, header=T, sep="\t")
@@ -32,12 +32,12 @@ if(length(grep("sort.bam",bam.files)) > 0){
 	bam.files = bam.files[-grep("sort.bam",bam.files)]
 }
 
-if(peak.type == "narrow"){
+if(nodup.bam == "no"){
 	suffix = ".bam$"
-}else if(peak.type == "broad"){
+}else if(nodup.bam == "yes"){
 	suffix = ".nodup.bam$"
 }else{
-	print("'peakType' must be 'narrow' or 'broad'")
+	print("'Remove_Duplicates' must be 'yes' or 'no'")
 	stop()
 }
 
