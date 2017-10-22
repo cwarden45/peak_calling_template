@@ -8,6 +8,7 @@ statFile = "coverage_statistics.txt"
 
 readsFolder = ""
 alignmentFolder = ""
+dupFlag = ""
 
 inHandle = open(parameterFile)
 lines = inHandle.readlines()
@@ -25,6 +26,9 @@ for line in lines:
 
 	if param == "Alignment_Folder":
 		alignmentFolder = value
+
+	if param == "Remove_Duplicates":
+		dupFlag = value
 		
 if (readsFolder == "") or (readsFolder == "[required]"):
 	print "Need to enter a value for 'Reads_Folder'!"
@@ -34,9 +38,18 @@ if (alignmentFolder == "") or (alignmentFolder == "[required]"):
 	print "Need to enter a value for 'Alignment_Folder'!"
 	sys.exit()
 
-
+if (dupFlag == "") or (dupFlag == "[required]"):
+	print "Need to enter a value for 'Remove_Duplicates'!"
+	sys.exit()
+	
 statHandle = open(statFile,"w")
-text = "SampleID\tSeqID\tuserID\tTotalReads\tPercent.Aligned\tPercent.Duplicate\tPercent.Proper.chrM\n"
+if dupFlag == "no":
+	text = "SampleID\tSeqID\tuserID\tTotalReads\tPercent.Aligned\tPercent.Proper.chrM\n"
+elif dupFlag == "yes":
+	text = "SampleID\tSeqID\tuserID\tTotalReads\tPercent.Aligned\tPercent.Full.chrM\tPercent.Duplicate\tPercent.NoDup.chrM\n"
+else:
+	print "'Remove_Duplicates' must be 'yes' or 'no'."
+	sys.exit()
 statHandle.write(text)
 	
 fastqcFolder = readsFolder + "/QC"
@@ -109,68 +122,148 @@ for file in fileResults:
 			line = inHandle.readline()
 		
 		inHandle.close()
-		
-		#get duplicate rate from Picard MarkDuplicates
-		duplicateMetrics = sampleSubfolder + "/MarkDuplicates_metrics.txt"
 
-		inHandle = open(duplicateMetrics)
-		line = inHandle.readline()
-		
-		lineCount = 0
-		
-		while line:
-			line = re.sub("\n","",line)
-			line = re.sub("\r","",line)
+		if dupFlag == "no":
+			#get chrM rate from idxstats
+			chrMetrics = sampleSubfolder + "/idxstats.txt"
+
+			inHandle = open(chrMetrics)
+			line = inHandle.readline()
 			
-			lineCount += 1
+			lineCount = 0
 			
-			if lineCount == 8:
+			chrM_counts = 0
+			total_adjusted_counts = 0
+			
+			while line:
+				line = re.sub("\n","",line)
+				line = re.sub("\r","",line)
+				
 				lineInfo = line.split("\t")
 				
-				percentDuplicate = 100*float(lineInfo[8])
-				percentDuplicate =  '{0:.2f}'.format(percentDuplicate) + "%"
+				chr = lineInfo[0]
+				aligned = lineInfo[2]
+				unaligned = lineInfo[3]
 				
-			line = inHandle.readline()
-		
-		inHandle.close()
-		
-		#get chrM rate from idxstats
-		chrMetrics = sampleSubfolder + "/idxstats_no_dup.txt"
+				adj_counts = int(aligned) - int(unaligned)
+				if adj_counts < 0:
+					adj_counts = 0
+					
+				if (chr == "chrM")or(chr == "MT"):
+					chrM_counts = adj_counts
+				
+				if chr != "*":
+					total_adjusted_counts += adj_counts
+					
+				line = inHandle.readline()
+			
+			inHandle.close()
 
-		inHandle = open(chrMetrics)
-		line = inHandle.readline()
-		
-		lineCount = 0
-		
-		chrM_counts = 0
-		total_adjusted_counts = 0
-		
-		while line:
-			line = re.sub("\n","",line)
-			line = re.sub("\r","",line)
+			percentChrM = 100*float(chrM_counts)/float(total_adjusted_counts)
+			percentChrM =  '{0:.2f}'.format(percentChrM) + "%"
 			
-			lineInfo = line.split("\t")
-			
-			chr = lineInfo[0]
-			aligned = lineInfo[2]
-			unaligned = lineInfo[3]
-			
-			adj_counts = int(aligned) - int(unaligned)
-			if adj_counts < 0:
-				adj_counts = 0
-				
-			if (chr == "chrM")or(chr == "MT"):
-				chrM_counts = adj_counts
-			
-			if chr != "*":
-				total_adjusted_counts += adj_counts
-				
-			line = inHandle.readline()
-		
-		inHandle.close()
+			text = sample + "\t" + seqID + "\t" + shortID + "\t" + totalReads + "\t" + alignedReads  + "\t" + percentChrM + "\n"
+			statHandle.write(text)
+		elif dupFlag == "yes":
+			#get duplicate rate from Picard MarkDuplicates
+			duplicateMetrics = sampleSubfolder + "/MarkDuplicates_metrics.txt"
 
-		percentChrM = 100*float(chrM_counts)/float(total_adjusted_counts)
-		percentChrM =  '{0:.2f}'.format(percentChrM) + "%"
-		
-		text = sample + "\t" + seqID + "\t" + shortID + "\t" + totalReads + "\t" + alignedReads + "\t" + percentDuplicate + "\t" + percentChrM + "\n"
-		statHandle.write(text)
+			inHandle = open(duplicateMetrics)
+			line = inHandle.readline()
+			
+			lineCount = 0
+			
+			while line:
+				line = re.sub("\n","",line)
+				line = re.sub("\r","",line)
+				
+				lineCount += 1
+				
+				if lineCount == 8:
+					lineInfo = line.split("\t")
+					
+					percentDuplicate = 100*float(lineInfo[8])
+					percentDuplicate =  '{0:.2f}'.format(percentDuplicate) + "%"
+					
+				line = inHandle.readline()
+			
+			inHandle.close()
+			
+			#get chrM rate from idxstats (no duplicates)
+			chrMetrics = sampleSubfolder + "/idxstats_no_dup.txt"
+
+			inHandle = open(chrMetrics)
+			line = inHandle.readline()
+			
+			lineCount = 0
+			
+			chrM_counts = 0
+			total_adjusted_counts = 0
+			
+			while line:
+				line = re.sub("\n","",line)
+				line = re.sub("\r","",line)
+				
+				lineInfo = line.split("\t")
+				
+				chr = lineInfo[0]
+				aligned = lineInfo[2]
+				unaligned = lineInfo[3]
+				
+				adj_counts = int(aligned) - int(unaligned)
+				if adj_counts < 0:
+					adj_counts = 0
+					
+				if (chr == "chrM")or(chr == "MT"):
+					chrM_counts = adj_counts
+				
+				if chr != "*":
+					total_adjusted_counts += adj_counts
+					
+				line = inHandle.readline()
+			
+			inHandle.close()
+
+			percentChrM = 100*float(chrM_counts)/float(total_adjusted_counts)
+			percentChrM =  '{0:.2f}'.format(percentChrM) + "%"
+
+			#get chrM rate from idxstats (full)
+			chrMetrics = sampleSubfolder + "/idxstats.txt"
+
+			inHandle = open(chrMetrics)
+			line = inHandle.readline()
+			
+			lineCount = 0
+			
+			chrM_counts = 0
+			total_adjusted_counts = 0
+			
+			while line:
+				line = re.sub("\n","",line)
+				line = re.sub("\r","",line)
+				
+				lineInfo = line.split("\t")
+				
+				chr = lineInfo[0]
+				aligned = lineInfo[2]
+				unaligned = lineInfo[3]
+				
+				adj_counts = int(aligned) - int(unaligned)
+				if adj_counts < 0:
+					adj_counts = 0
+					
+				if (chr == "chrM")or(chr == "MT"):
+					chrM_counts = adj_counts
+				
+				if chr != "*":
+					total_adjusted_counts += adj_counts
+					
+				line = inHandle.readline()
+			
+			inHandle.close()
+
+			percentChrM_full = 100*float(chrM_counts)/float(total_adjusted_counts)
+			percentChrM_full =  '{0:.2f}'.format(percentChrM_full) + "%"
+			
+			text = sample + "\t" + seqID + "\t" + shortID + "\t" + totalReads + "\t" + alignedReads + "\t"  + percentChrM_full + "\t" + percentDuplicate + "\t" + percentChrM + "\n"
+			statHandle.write(text)
