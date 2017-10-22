@@ -7,7 +7,6 @@ my $alignment_folder = "../Alignment_Folder";
 my $bam_suffix = "\_filtered.bam";
 my $tag_folder = "Tag_Directories";
 my $peak_folder = "Peaks";
-my $HOMER = "/path/to/HOMER/bin/";
 
 opendir DH, $alignment_folder or die "Failed to open $alignment_folder: $!";
 my @files= readdir(DH);
@@ -16,11 +15,17 @@ foreach my $file (@files){
 	if($file =~ /$bam_suffix$/){
 		my ($sampleID) = ($file =~ /(.*)$bam_suffix$/);
 		print "$sampleID\n";
-		my $bam = "$alignment_folder/$sampleID\_filtered.bam";
+		my $bam = "$alignment_folder/$sampleID$bam_suffix";
+
+		#may need to convert to .sam if your file is too big
+		#my $sam = "$sampleID.sam";
+		#my $command = "samtools view $bam > $sam";
+		#system($command);
 
 		my $sample_tags = "$tag_folder/$sampleID";
 
 		my $command = "makeTagDirectory $sample_tags $bam -format sam ";
+		#my $command = "makeTagDirectory $sample_tags $sam -format sam ";
 		system($command);
 
 		my $raw_peaks = "$peak_folder/$sampleID.peaks";
