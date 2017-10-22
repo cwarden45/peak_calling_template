@@ -11,7 +11,7 @@ tssGTF = ""
 gtfID = ""
 email = ""
 peStatus = ""
-peakType = ""
+dupFlag = ""
 
 inHandle = open(parameterFile)
 lines = inHandle.readlines()
@@ -42,8 +42,8 @@ for line in lines:
 	if param == "PE_Reads":
 		peStatus = value
 
-	if param == "peakType":
-		peakType = value
+	if param == "Remove_Duplicates":
+		dupFlag = value
 		
 fileResults = os.listdir(alignmentFolder)
 
@@ -55,12 +55,12 @@ masterHandle.write(text)
 jobCount = 0
 
 for file in fileResults:
-	if peakType == "broad":
+	if dupFlag == "yes":
 		suffix = ".nodup.bam$"
-	elif peakType == "narrow":
+	elif dupFlag == "no":
 		suffix = ".bam$"
 	else:
-		print "'peakType' must be 'broad' or 'narrow'"
+		print "'Remove_Duplicates' must be 'yes' or 'no'"
 		sys.exit()
 		
 	result = re.search(suffix,file)
@@ -95,8 +95,13 @@ for file in fileResults:
 			#when I've tested single-end RNA-Seq, I've gotten the same results for name and position sorted .bam (and manual says parameter is ignored for single-end data)
 			#However, for paired-end RNA-Seq, there can be differences, and the name-sorted .bam seems to be a little more accurate
 			if peStatus != "yes":
-				print "Add SE code"
-				sys.exit()
+				countsFile = sample + "_merged_peak_counts.txt"
+				text = "htseq-count -f bam -r pos -s no -t peak -i " + gtfID + " " + fullPath + " " + peakGTF + " > " + countsFile + "\n"
+				outHandle.write(text)
+
+				countsFile = sample + "_promoter_counts.txt"
+				text = "htseq-count -f bam -r pos -s no -t promoter -i " + gtfID + " " + fullPath + " " + tssGTF + " > " + countsFile + "\n"
+				outHandle.write(text)
 			else:
 				nameSortedBam = sample + ".name.sort.bam"
 				sortPrefix = re.sub(".bam$","",nameSortedBam)
