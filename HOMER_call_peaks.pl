@@ -28,6 +28,9 @@ foreach my $file (@files){
 		#my $command = "makeTagDirectory $sample_tags $sam -format sam ";
 		system($command);
 
+		#$command = "rm $sam";
+		#system($command);
+
 		my $raw_peaks = "$peak_folder/$sampleID.peaks";
 		$command = "findPeaks $sample_tags -style $model_type -o $raw_peaks";
 		system($command);
