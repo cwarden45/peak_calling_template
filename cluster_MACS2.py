@@ -4,13 +4,14 @@ import os
 
 genomeRef = "hs"
 
-parameterFile = "parameters.txt"
 finishedSamples = ()
+parameterFile = "parameters.txt"
 
 alignmentFolder = ""
 email = ""
 peStatus = ""
 peakType = ""
+dupFlag = ""
 
 inHandle = open(parameterFile)
 lines = inHandle.readlines()
@@ -34,6 +35,9 @@ for line in lines:
 
 	if param == "peakType":
 		peakType = value
+
+	if param == "Remove_Duplicates":
+		dupFlag = value
 		
 fileResults = os.listdir(alignmentFolder)
 
@@ -45,11 +49,17 @@ masterHandle.write(text)
 jobCount = 0
 
 for file in fileResults:
-	result = re.search(".nodup.bam$",file)
+	suffix = ".bam$"
+	if dupFlag == "yes":
+		suffix = ".nodup.bam$"
+	elif dupFlag != "no":
+		print "'Remove_Duplicates' must be 'yes' or 'no'"
+		sys.exit()
+	result = re.search(suffix,file)
 	fullPath = os.path.join(alignmentFolder, file)
 	
 	if result:
-		sample = re.sub(".nodup.bam$","",file)
+		sample = re.sub(suffix,"",file)
 		sortResult = re.search(".name.sort.bam",file)
 		
 		if not sortResult:
