@@ -132,4 +132,5 @@ gtf.table = data.frame(chr=merged.peaks$seqnames, source=rep("merged_HOMER_peaks
 						score = rep(".",nrow(merged.peaks)),
 						strand = rep(".",nrow(merged.peaks)),
 						frame = rep(".",nrow(merged.peaks)), attribute)
+gtf.table = apply(gtf.table, 2, as.character)
 write.table(gtf.table,merged.GTF, sep="\t", row.names=F, col.names=F, quote=F)
