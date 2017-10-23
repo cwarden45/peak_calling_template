@@ -3,17 +3,25 @@ genome = as.character(param.table$Value[param.table$Parameter == "genome"])
 alignment.folder = as.character(param.table$Value[param.table$Parameter == "Alignment_Folder"])
 merged.peak.file = as.character(param.table$Value[param.table$Parameter == "mergedPeakGTF"])
 peakType = as.character(param.table$Value[param.table$Parameter == "peakType"])
+nodup.bam = as.character(param.table$Value[param.table$Parameter == "Remove_Duplicates"])
 sample.description.file = as.character(param.table$Value[param.table$Parameter == "sample_description_file"])
 tss.dist = as.numeric(as.character(param.table$Value[param.table$Parameter == "flankTSS"]))
 
 library("ChIPseeker")
 
-if(peakType == "broad"){
+if(nodup.bam == "yes"){
 	bamSuffix = ".nodup.bam$"
+}else if(nodup.bam == "no"){
+	bamSuffix = ".bam$"
+}else{
+	print("'Remove_Duplicates' must be 'yes' or 'no'")
+	stop()	
+}
+
+if(peakType == "broad"){
 	peakSuffix = "_peaks.broadPeak"
 }else if(peakType == "narrow"){
-	print("Add narrow peak code")
-	stop()
+	peakSuffix = "_peaks.narrowPeak"
 }else{
 	print("'peakType' must be 'broad' or 'narrow'")
 	stop()	
