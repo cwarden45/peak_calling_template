@@ -71,11 +71,13 @@ heatmap.3 example: https://www.biostars.org/p/18211/
 
 IGV / igvtools: http://software.broadinstitute.org/software/igv/
 
-*Functional Enrichment*
+*Functional Enrichment / Motif-Finding*
 
 i-cisTarget: https://gbiomed.kuleuven.be/apps/lcb/i-cisTarget/index.php
 
 HOMER: http://homer.ucsd.edu/homer/introduction/programs.html
+
+MEME Suite: http://meme-suite.org/index.html
 
 ### Parameter Values ###
 | Parameter | Value|
