@@ -165,7 +165,7 @@ for file in fileResults:
 			
 			if dupFlag == "yes":
 				rgBam = sampleSubfolder + "/rg.bam"
-				text = java + " -Xmx" + memLimit + " -Djava.io.tmpdir="+ tempDir + " -jar "+jar_path+"picard-tools-2.5.0/picard.jar AddOrReplaceReadGroups I=" + alnBam + " O=" + rgBam + " SO=coordinate RGID=1 RGLB=ChIP-Seq RGPL=Illumina RGPU="+barcode+" RGCN=COH RGSM=" + sample + "\n"
+				text = java + " -Xmx" + memLimit + " -Djava.io.tmpdir="+ tempDir + " -jar "+jar_path+"picard-tools-2.5.0/picard.jar AddOrReplaceReadGroups I=" + alnBam + " O=" + rgBam + " SO=coordinate RGID=1 RGLB=ChIP-Seq RGPL=Illumina RGPU="+barcode+" RGCN=COH RGSM=" + sample + " CREATE_INDEX=true\n"
 				outHandle.write(text)
 
 				text = "rm " + alnBam + "\n"
@@ -189,7 +189,10 @@ for file in fileResults:
 				outHandle.write(text)
 				
 				text = "rm " + rgBam + "\n"
-				outHandle.write(text)			
+				outHandle.write(text)
+				
+				text = "rm " + re.sub(".bam$",".bai",rgBam) + "\n"
+				outHandle.write(text)	
 			else:
 				rgBam = alignmentFolder + "/" + sample + ".bam"
 				text = java + " -Xmx" + memLimit + " -Djava.io.tmpdir="+ tempDir + " -jar "+jar_path+"picard-tools-2.5.0/picard.jar AddOrReplaceReadGroups I=" + alnBam + " O=" + rgBam + " SO=coordinate RGID=1 RGLB=ChIP-Seq RGPL=Illumina RGPU="+barcode+" RGCN=COH RGSM=" + sample + " CREATE_INDEX=true\n"
