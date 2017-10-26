@@ -136,16 +136,12 @@ for file in fileResults:
 				read2 = re.sub("_R1_001.fastq$","_R2_001.fastq",read1)
 			
 				alnSam = sampleSubfolder + "/aligned.sam"
-				#switch parameters for ATAC-Seq
-				#text = "bowtie2 --local -X 2000 -p "+ str(threads) + " -x " + bowtieRef + " -1 " + read1 + " -2 " + read2  + " > " + alnSam + "\n"
 				text = "bowtie2 -p "+ str(threads) + " -x " + bowtieRef + " -1 " + read1 + " -2 " + read2  + " > " + alnSam + "\n"
 				outHandle.write(text)			
 			elif(pairedStatus == "no"):
 				read1 = readsFolder + "/" + file
 			
 				alnSam = sampleSubfolder + "/aligned.sam"
-				#switch parameters for ATAC-Seq
-				#text = "bowtie2 --local -X 2000 -p "+ str(threads) + " " + bowtieRef + " -U " + read1 + " -S " + alnSam + "\n"
 				text = "bowtie2 -p "+ str(threads) + " " + bowtieRef + " -U " + read1 + " -S " + alnSam + "\n"
 				outHandle.write(text)
 			else:
