@@ -21,6 +21,7 @@ sample.description.file = as.character(param.table$Value[param.table$Parameter =
 cpm.file = as.character(param.table$Value[param.table$Parameter == "fpkm_file_TSS"])
 cluster.distance = as.character(param.table$Value[param.table$Parameter == "cluster_distance"])
 plot.groups = unlist(strsplit(as.character(param.table$Value[param.table$Parameter == "plot_groups"]), split=","))
+plot.types = unlist(strsplit(as.character(param.table$Value[param.table$Parameter == "plot_type"]), split=","))
 min.expression = as.numeric(as.character(param.table$Value[param.table$Parameter == "fpkm_binding_cutoff"]))
 
 fixed.color.palatte = c("green","orange","purple","cyan","pink","maroon","yellow","grey","red","blue","black","darkgreen","thistle1","tan","orchid1",colors())
@@ -38,8 +39,12 @@ quantiles = data.frame(Percentage = rownames(quantiles), quantiles)
 write.table(quantiles, "TSS_log2_FPKM_quantiles.txt",sep="\t", quote=F, row.names=F)
 
 
-for (group in plot.groups){
+for (i in 1:length(plot.groups)){
+	group = plot.groups[i]
+	group.type = plot.types[i]
 	print(group)
+	
+	
 	temp.mat = normalized.mat[,!is.na(sample.table[,group])]
 	print(dim(temp.mat))
 	qc.grp = sample.table[,group]
@@ -60,16 +65,44 @@ for (group in plot.groups){
 	color.palette <- fixed.color.palatte[1:length(groups)]
 
 	labelColors = rep("black",times=ncol(temp.mat))
-	for (i in 1:length(groups)){
-		labelColors[qc.grp == as.character(groups[i])] = color.palette[i]
-	}#end for (i in 1:length(groups))
+	if(group.type == "continuous"){
+		library("RColorBrewer")
+		plot.var = as.numeric(qc.grp)
+		plot.var.min = min(plot.var, na.rm=T)
+		plot.var.max = max(plot.var, na.rm=T)
+		
+		plot.var.range = plot.var.max - plot.var.min
+		plot.var.interval = plot.var.range / continuous.color.breaks
+		
+		color.range = colorRampPalette(c("green","black","orange"))(n = continuous.color.breaks)
+		plot.var.breaks = plot.var.min + plot.var.interval*(0:continuous.color.breaks)
+		for (j in 1:continuous.color.breaks){
+			#print(paste(plot.var.breaks[j],"to",plot.var.breaks[j+1]))
+			labelColors[(plot.var >= plot.var.breaks[j]) &(plot.var <= plot.var.breaks[j+1])] = color.range[j]
+		}#end for (j in 1:continuous.color.breaks)
+	}else{
+		for (j in 1:length(groups)){
+			labelColors[qc.grp == as.character(groups[j])] = color.palette[j]
+		}#end for (j in 1:length(groups))
+	}
 
 	pca.file = paste("TSS_FPKM_pca_by_",group,".png",sep="")
 	png(file=pca.file)
-	plot(pc.values$PC1, pc.values$PC2, col = labelColors, xlab = paste("PC1 (",round(100* variance.explained[1] , digits = 2),"%)", sep = ""),
-			ylab = paste("PC2 (",round(100* variance.explained[2] , digits = 2),"%)", sep = ""), pch=19,
-	    		main = group)
-	legend("bottomleft",legend=groups,col=color.palette,  pch=19)
+	if(group.type == "continuous"){
+		par(mar = par("mar") + c(0,0,0,5))
+		plot(pc.values$PC1, pc.values$PC2, col = labelColors, xlab = paste("PC1 (",round(100* variance.explained[1] , digits = 2),"%)", sep = ""),
+				ylab = paste("PC2 (",round(100* variance.explained[2] , digits = 2),"%)", sep = ""),
+				pch=19, main=paste("Color by ",group,sep=""))
+		legend("right",legend=c(round(plot.var.max,digits=1),rep("",length(color.range)-2),round(plot.var.min,digits=1)),
+				col=rev(color.range),  pch=15, inset=-0.2, xpd=T, y.intersp = 0.4, cex=0.8, pt.cex=1.5)
+	}else{
+		par(mar = par("mar") + c(0,0,0,7))
+		plot(pc.values$PC1, pc.values$PC2, col = labelColors, xlab = paste("PC1 (",round(100* variance.explained[1] , digits = 2),"%)", sep = ""),
+				ylab = paste("PC2 (",round(100* variance.explained[2] , digits = 2),"%)", sep = ""),
+				pch=19, main=paste("Color by ",group,sep=""))
+		legend("right",legend=groups,col=color.palette,
+				xpd=T, inset=-0.3, pch=19)
+	}
 	dev.off()
 
 	box.file = paste("TSS_FPKM_box_plot_by_",group,".png",sep="")
@@ -114,7 +147,12 @@ for (group in plot.groups){
 					plot(expr, freq, type="l", xlab = paste("Log2(FPKM + ",min.expression,")",sep=""), ylab = "Density",
 							xlim=c(expr.min,expr.max), ylim=c(0,0.2), col=labelColors[i],
 					    		main = group)
-					legend("topright",legend=groups,col=color.palette,  pch=19)
+					if(group.type == "continuous"){
+						legend("right",legend=c(round(plot.var.max,digits=1),rep("",length(color.range)-2),round(plot.var.min,digits=1)),
+								col=rev(color.range),  pch=15, inset=-0.4, xpd=T, y.intersp = 0.4, cex=0.8, pt.cex=1.5)
+					}else{
+						legend("right",legend=groups,col=color.palette,  pch=19, inset=-0.6, xpd=T)
+					}
 				}#end if(i == 1)
 			else
 				{
