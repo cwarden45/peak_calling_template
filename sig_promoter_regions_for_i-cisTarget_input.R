@@ -3,8 +3,8 @@ dba.file = "[comp id]_[criteria].txt"
 upID = "Trt Increased Binding"
 downID = "Trt Decreased Binding"
 
-upBed = "../Result/i-cisTarget_motif/input_files/merged_peaks_2kb_[comp id]_UP.bed"
-downBed = "../Result/i-cisTarget_motif/input_files/merged_peaks_2kb_[comp id]_DOWN.bed"
+upBed = "../Result/i-cisTarget_motifs/input_files/merged_peaks_2kb_[comp id]_UP.bed"
+downBed = "../Result/i-cisTarget_motifs/input_files/merged_peaks_2kb_[comp id]_DOWN.bed"
 
 input.table = read.delim(dba.file, head=T, sep="\t")
 
