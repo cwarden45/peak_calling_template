@@ -6,8 +6,6 @@ my $bed = "/path/to/merged_peaks_2kb_[comp ID]_[direction].bed";
 my $output_folder = "/path/to/HOMER_motifs/merged_peaks_2kb_[comp ID]_[direction]";
 my $extra_param = "-size given";
 
-my $HOMER = "/path/to/HOMER/bin/";
-
 my $command = "findMotifsGenome.pl $bed $genome $output_folder $extra_param";
 system($command);
 
