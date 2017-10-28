@@ -7,12 +7,11 @@ max.plot = 1000
 param.table = read.table(param.file, header=T, sep="\t")
 genome = as.character(param.table$Value[param.table$Parameter == "genome"])
 alignment.folder = as.character(param.table$Value[param.table$Parameter == "Alignment_Folder"])
-merged.peak.file = as.character(param.table$Value[param.table$Parameter == "mergedPeakGTF"])
 peakType = as.character(param.table$Value[param.table$Parameter == "peakType"])
 nodup.bam = as.character(param.table$Value[param.table$Parameter == "Remove_Duplicates"])
 annoType = as.character(param.table$Value[param.table$Parameter == "gtfID"])
 sample.description.file = as.character(param.table$Value[param.table$Parameter == "sample_description_file"])
-tss.GTF = as.character(param.table$Value[param.table$Parameter == "promoterGTF"])
+tss.GTF = as.character(param.table$Value[param.table$Parameter == "promoterGTF_MAC"])
 merged.GTF = as.character(param.table$Value[param.table$Parameter == "mergedPeakGTF"])
 
 library("GenomicRanges")
@@ -35,23 +34,10 @@ if(peakType == "broad"){
 	stop()	
 }
 
-files = list.files(alignment.folder, pattern=bamSuffix)
-sampleIDs = gsub(bamSuffix,"",files)
-
-bedFiles = paste(alignment.folder,"/", sampleIDs,"/macs_",sampleIDs,peakSuffix,sep="")
 sample.description.table = read.table(sample.description.file, sep="\t", header=T)
 longID = sample.description.table$sampleID
 sample.label = sample.description.table$userID
-
-matchedIDs = sample.label[match(sampleIDs, longID)]
-if(length(matchedIDs) != length(matchedIDs[!is.na(matchedIDs)])){
-	print("There are mismatched samples")
-	names(matchedIDs) = sampleIDs
-	print(matchedIDS)
-	stop()
-}else{
-	bedFiles = bedFiles[match(longID,sampleIDs)]
-}
+bedFiles = paste(sample.description.table$alignment.folder,"/", longID,"/macs_",longID,peakSuffix,sep="")
 
 num.peaks = c()
 
