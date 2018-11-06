@@ -2,7 +2,7 @@ use warnings;
 use strict;
 use Bio::SeqIO;
 
-my $bed_file = "../Result/i-cisTarget_motif/input_files/[compID]_[direction].bed";
+my $bed_file = "../Results/i-cisTarget_motif/input_files/[compID]_[direction].bed";
 my $ref = "/path/to/ref.fa";
 my $peak_seq = "[compID]_[direction].fa";
 

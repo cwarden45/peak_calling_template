@@ -3,6 +3,8 @@ import re
 import os
 
 genomeRef = "hs"
+#NOTE #1: may need to change species above
+#NOTE #2: I've added a variable 'macs_dup_use' to allow MACS to use up to a certain number of duplicates that it defined (but I think it is usually best to leave this alone)
 
 finishedSamples = ()
 parameterFile = "parameters.txt"
@@ -50,9 +52,12 @@ jobCount = 0
 
 for file in fileResults:
 	suffix = ".bam$"
+	macs_dup_use=""
 	if dupFlag == "yes":
 		suffix = ".nodup.bam$"
-	elif dupFlag != "no":
+	elif dupFlag == "no":
+		macs_dup_use=" --keep-dup 100"
+	else:
 		print "'Remove_Duplicates' must be 'yes' or 'no'"
 		sys.exit()
 	result = re.search(suffix,file)

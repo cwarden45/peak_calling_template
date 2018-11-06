@@ -39,7 +39,7 @@ matchedIDs = sample.label[match(sampleIDs, longID)]
 if(length(matchedIDs) != length(matchedIDs[!is.na(matchedIDs)])){
 	print("There are mismatched samples")
 	names(matchedIDs) = sampleIDs
-	print(matchedIDS)
+	print(matchedIDs)
 	stop()
 }else{
 	names(bedFiles)=matchedIDs

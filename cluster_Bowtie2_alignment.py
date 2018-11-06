@@ -142,7 +142,7 @@ for file in fileResults:
 				read1 = readsFolder + "/" + file
 			
 				alnSam = sampleSubfolder + "/aligned.sam"
-				text = "bowtie2 -p "+ str(threads) + " " + bowtieRef + " -U " + read1 + " -S " + alnSam + "\n"
+				text = "bowtie2 -p "+ str(threads) + " -x " + bowtieRef + " -U " + read1 + " -S " + alnSam + "\n"
 				outHandle.write(text)
 			else:
 				print "'PE_Reads' value must be 'yes' or 'no'"

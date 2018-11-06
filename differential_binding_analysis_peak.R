@@ -188,6 +188,10 @@ if((aligned.type == "aligned")|(aligned.type =="quantified")){
 FPKM = FPKM[,match(sample.label, colnames(FPKM))]
 
 print(dim(counts))
+counts.table = counts.table[region.length.kb > 0,]
+counts = counts[region.length.kb > 0,]
+FPKM = FPKM[region.length.kb > 0,]
+print(dim(counts))
 bound.sample.count = apply(FPKM, 1, count.defined.values, expr.cutoff = log2(min.expression))
 counts.table = counts.table[bound.sample.count >= round(min.fraction.bound * ncol(counts)),]
 counts = counts[bound.sample.count >= round(min.fraction.bound * ncol(counts)),]
@@ -977,11 +981,14 @@ if(rep.check == 1){
 							average.fpkm, fc.table, status = status)	
 }#end else
 
-print(paste("Up-Regulated Promoter(<= 1kb): ",length(dbr.table$status[(dbr.table$annotation == "Promoter (<=1kb)")&(dbr.table$status == upID)]),sep=""))
-print(paste("Down-Regulated Promoter(<= 1kb): ",length(dbr.table$status[(dbr.table$annotation == "Promoter (<=1kb)")&(dbr.table$status == downID)]),sep=""))
 
-print(paste("Up-Regulated Promoter( 1-2 kb): ",length(dbr.table$status[(dbr.table$annotation == "Promoter (1-2kb)")&(dbr.table$status == upID)]),sep=""))
-print(paste("Down-Regulated Promoter( 1-2 kb): ",length(dbr.table$status[(dbr.table$annotation == "Promoter (1-2kb)")&(dbr.table$status == downID)]),sep=""))
+dbr.table$annotation = as.character(dbr.table$annotation)
+dbr.table$annotation[is.na(dbr.table$annotation)]="unannotated"
+print(paste("Up-Regulated Promoter(<= 1kb): ",length(status[(dbr.table$annotation == "Promoter (<=1kb)")&(dbr.table$status == upID)]),sep=""))
+print(paste("Down-Regulated Promoter(<= 1kb): ",length(status[(dbr.table$annotation == "Promoter (<=1kb)")&(dbr.table$status == downID)]),sep=""))
+
+print(paste("Up-Regulated Promoter( 1-2 kb): ",length(status[(dbr.table$annotation == "Promoter (1-2kb)")&(dbr.table$status == upID)]),sep=""))
+print(paste("Down-Regulated Promoter( 1-2 kb): ",length(status[(dbr.table$annotation == "Promoter (1-2kb)")&(dbr.table$status == downID)]),sep=""))
 
 
 dbr.file = paste("merged_peaks_",comp.name,"_",pvalue.method,"_DBR_fc_",fc.cutoff,"_fdr_",fdr.cutoff,"_pval_",pvalue.cutoff,".txt",sep="")
@@ -991,7 +998,8 @@ write.table(dbr.table, file=dbr.file, row.names=F, quote=F, sep="\t")
 final.dbr.file = paste(user.folder,"/Differential_Binding_Analysis/merged_peaks_",comp.name,"_DBR_stats.txt",sep="")
 write.table(dbr.table, file=final.dbr.file, row.names=F, quote=F, sep="\t")
 
-plot.flag = (status != "No Change")&((dbr.table$annotation == "Promoter (<=1kb)")|(dbr.table$annotation == "Promoter (1-2kb)"))
+plot.flag = (dbr.table$status != "No Change")&((dbr.table$annotation == "Promoter (<=1kb)")|(dbr.table$annotation == "Promoter (1-2kb)"))
+plot.flag[is.na(dbr.table$annotation)]=FALSE
 
 temp.fpkm = FPKM
 temp.fpkm = temp.fpkm[plot.flag, ]

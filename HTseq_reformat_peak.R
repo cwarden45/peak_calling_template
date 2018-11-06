@@ -34,6 +34,7 @@ counts.file = as.character(param.table$Value[param.table$Parameter == "counts_fi
 rpkm.file = as.character(param.table$Value[param.table$Parameter == "fpkm_file_peak"])
 cpm.file = as.character(param.table$Value[param.table$Parameter == "CPM_file_peak"])
 aligned.type = as.character(param.table$Value[param.table$Parameter == "FPKM_norm"])
+omit.chr = unlist(strsplit(as.character(param.table$Value[param.table$Parameter == "omitChr"]), split=","))
 
 library(ChIPseeker)
 library(GenomicRanges)
@@ -250,6 +251,9 @@ write.table(coverage.table, file="Bowtie2_peak_coverage_stats.txt", quote=F, row
 #tables have different file formats for downstream R analysis versus other applications that involve parsing text files
 #	--> don't set the Result folder to the working directory, or you may skip regions during DBR analysis
 annotated.rpkm = data.frame(region.info, RPKM)
+print(dim(annotated.rpkm))
+annotated.rpkm=annotated.rpkm[as.numeric(as.character(annotated.rpkm$region.length.kb)) > 0,]
+print(dim(annotated.rpkm))
 write.table(annotated.rpkm, file = rpkm.file, sep="\t", row.names=F, quote=T)
 
 result.file = paste(user.folder, rpkm.file, sep="/")
@@ -271,7 +275,7 @@ if((aligned.type == "aligned")|(aligned.type =="quantified")){
 	total.million.aligned.reads = aligned.reads / 1000000
 	print(total.million.aligned.reads)
 
-	CPM = t(apply(rpk, 1, normalizeTotalExpression, totalReads = total.million.aligned.reads))
+	CPM = t(apply(count.mat, 1, normalizeTotalExpression, totalReads = total.million.aligned.reads))
 	colnames(CPM) = sample.label
 }else if(aligned.type == "TMM"){
 	library(edgeR)

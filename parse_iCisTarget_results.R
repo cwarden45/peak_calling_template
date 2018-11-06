@@ -1,8 +1,8 @@
 dbaFile = "merged_peaks_[compID]_[criteria].txt"
-inputBed = "../Result/i-cisTarget_motifs/input_files/merged_peaks_2kb_[compID]_[direction].bed"
-outputResult = "../Result/i-cisTarget_motifs/merged_peaks_2kb_[compID]_[direction]_peaks/statistics.tbl"
-outputMapping = "../Result/i-cisTarget_motifs/merged_peaks_2kb_[compID]_[direction]_peaks/input_mapped_to_icistarget_regions.bed"
-outputFile = "../Result/i-cisTarget_motifs/merged_peaks_2kb_[compID]_[direction]_peaks.txt"
+inputBed = "../Results/i-cisTarget_motifs/input_files/merged_peaks_2kb_[compID]_[direction].bed"
+outputResult = "../Results/i-cisTarget_motifs/merged_peaks_2kb_[compID]_[direction]_peaks/statistics.tbl"
+outputMapping = "../Results/i-cisTarget_motifs/merged_peaks_2kb_[compID]_[direction]_peaks/input_mapped_to_icistarget_regions.bed"
+outputFile = "../Results/i-cisTarget_motifs/merged_peaks_2kb_[compID]_[direction]_peaks.txt"
 
 dba.table = read.delim(dbaFile, head=T, sep="\t")
 dbaID = paste(dba.table$chr,":",dba.table$start,"-",dba.table$stop,sep="")

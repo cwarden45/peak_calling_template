@@ -111,8 +111,7 @@ split.promoter.info = function(char){
 	char = gsub("_Promoter","",char)
 	promoter.info = unlist(strsplit(char,"_"))
 	promoter.gene = promoter.info[1]
-	promoter.tx = promoter.info[2]
-	promoter.loc = promoter.info[3]
+	promoter.loc = promoter.info[2]
 	
 	promoter.info = unlist(strsplit(promoter.loc,":"))
 	promoter.chr = promoter.info[1]
@@ -120,7 +119,7 @@ split.promoter.info = function(char){
 	promoter.info = unlist(strsplit(promoter.info[2],"-"))
 	promoter.start = promoter.info[1]
 	promoter.stop = promoter.info[2]
-	promoter.list = list(gene=promoter.gene, transcript=promoter.tx,
+	promoter.list = list(gene=promoter.gene,
 						promoter.chr=promoter.chr,
 						promoter.start=promoter.start, promoter.stop=promoter.stop,
 						promoter.strand=promoter.strand)
@@ -177,7 +176,7 @@ if((aligned.type == "aligned")|(aligned.type =="quantified")){
 	names(aligned.reads)=rownames(y$samples)
 	aligned.reads = aligned.reads[match(sample.label, names(aligned.reads))]
 	
-	RPKM = round(log2(rpkm(y, promoter.length = 1000 * as.numeric(promoter.length.kb))+min.expression), digits=2)
+	RPKM = round(log2(rpkm(y, gene.length = 1000 * as.numeric(promoter.length.kb))+min.expression), digits=2)
 }else{
 	stop("Print RPKM_norm must be either 'aligned', 'quantified', or 'TMM'")
 }#end else
@@ -193,6 +192,9 @@ write.table(coverage.table, file="Bowtie2_TSS_coverage_stats.txt", quote=F, row.
 #tables have different file formats for downstream R analysis versus other applications that involve parsing text files
 #	--> don't set the Result folder to the working directory, or you may skip promoters during DBR analysis
 annotated.rpkm = data.frame(promoter.info, RPKM)
+print(dim(annotated.rpkm))
+annotated.rpkm=annotated.rpkm[annotated.rpkm$promoter.length.kb > 0,]
+print(dim(annotated.rpkm))
 write.table(annotated.rpkm, file = rpkm.file, sep="\t", row.names=F, quote=T)
 
 result.file = paste(user.folder, rpkm.file, sep="/")
@@ -214,7 +216,7 @@ if((aligned.type == "aligned")|(aligned.type =="quantified")){
 	total.million.aligned.reads = aligned.reads / 1000000
 	print(total.million.aligned.reads)
 
-	CPM = t(apply(rpk, 1, normalizeTotalExpression, totalReads = total.million.aligned.reads))
+	CPM = t(apply(count.mat, 1, normalizeTotalExpression, totalReads = total.million.aligned.reads))
 	colnames(CPM) = sample.label
 }else if(aligned.type == "TMM"){
 	library(edgeR)
@@ -226,7 +228,7 @@ if((aligned.type == "aligned")|(aligned.type =="quantified")){
 	names(aligned.reads)=rownames(y$samples)
 	aligned.reads = aligned.reads[match(sample.label, names(aligned.reads))]
 	
-	CPM = cpm(y, promoter.length = 1000 * as.numeric(promoter.length.kb))
+	CPM = cpm(y, gene.length = 1000 * as.numeric(promoter.length.kb))
 }else{
 	stop("Print RPKM_norm must be either 'aligned', 'quantified', or 'TMM'")
 }#end else
