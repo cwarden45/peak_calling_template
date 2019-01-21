@@ -2,7 +2,7 @@
 
 Code developed when providing analysis support from the City of Hope Integrative Genomics Core with requests / suggestions from *Yapeng Su* (Caltech; Broad/Narrow ChIP-Seq, ATAC-Seq).
 
-I would also like to thank the following users that gave us permission to acknowledge these templates (or scripts similar to these templates) were used for analysis of their data: *Zuoming Sun* (ChIP-Seq), *John Chan* (ATAC-Seq QC), and *Jeremy Jones* (Ben Copeland’s project; Narrow ChIP-Seq re-analysis / QC).  There is **1** other internal collaborator that currently did not to be explicitly acknowledged here (at this time). 
+I would also like to thank the following users that gave us permission to acknowledge these templates (or scripts similar to these templates) were used for analysis of their data: *Zuoming Sun* (ChIP-Seq), *John Chan* (ATAC-Seq QC), and *Jeremy Jones* (Ben Copeland’s project; narrow ChIP-Seq re-analysis / QC).  There is **1** other internal collaborator that currently did not to be explicitly acknowledged here (at this time). 
 
 In general, some projects have been analyzed or re-analyzed with different staff members (sometimes in different labs/institutes, sometimes within the IGC).  So, the use of data with modified versions of these templates may not be what is eventually used in the associated publication.
 
